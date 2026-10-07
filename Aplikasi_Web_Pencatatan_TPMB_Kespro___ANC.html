@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIP-TPMB | Sistem Pencatatan Kespro & ANC Bidan Mandiri</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        },
+                        rosebrand: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; color: black !important; }
+            .print-shadow-none { box-shadow: none !important; border: none !important; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="h-full flex flex-col md:flex-row text-slate-800 font-sans antialiased bg-slate-50">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="no-print w-full md:w-64 bg-gradient-to-b from-brand-900 via-brand-800 to-slate-900 text-white flex-shrink-0 flex flex-col justify-between shadow-2xl z-20">
+        <div>
+            <!-- Brand Logo -->
+            <div class="p-5 border-b border-brand-700/50 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-teal-300 shadow-inner">
+                    <i class="fa-solid fa-hand-holding-medical text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-base tracking-wider leading-tight text-white">SIP-TPMB</h1>
+                    <p class="text-[11px] text-teal-200/80 font-light">Klaster Kelompok 1 & 2</p>
+                </div>
+            </div>
+
+            <!-- Nav Items -->
+            <nav class="p-3 space-y-1.5 text-xs font-semibold">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-200 bg-brand-700 text-white shadow-md">
+                    <i class="fa-solid fa-chart-line w-4 text-center text-teal-200"></i>
+                    <span>Dashboard Utama</span>
+                </button>
+                <button onclick="switchTab('pasien')" id="nav-pasien" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-200 text-teal-100 hover:bg-brand-700/50 hover:text-white">
+                    <i class="fa-solid fa-user-plus w-4 text-center text-teal-200"></i>
+                    <span>Registrasi & Pasien</span>
+                </button>
+                <button onclick="switchTab('kespro')" id="nav-kespro" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-200 text-teal-100 hover:bg-brand-700/50 hover:text-white">
+                    <i class="fa-solid fa-heart-pulse w-4 text-center text-rose-300"></i>
+                    <span>Kespro & Pranikah</span>
+                </button>
+                <button onclick="switchTab('anc')" id="nav-anc" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-200 text-teal-100 hover:bg-brand-700/50 hover:text-white">
+                    <i class="fa-solid fa-person-pregnant w-4 text-center text-emerald-300"></i>
+                    <span>ANC & Skrining KSPR</span>
+                </button>
+                <button onclick="switchTab('edukasi')" id="nav-edukasi" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-200 text-teal-100 hover:bg-brand-700/50 hover:text-white">
+                    <i class="fa-solid fa-book-open-reader w-4 text-center text-amber-300"></i>
+                    <span>Modul KIE & Konseling</span>
+                </button>
+                <button onclick="switchTab('rujukan')" id="nav-rujukan" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-200 text-teal-100 hover:bg-brand-700/50 hover:text-white">
+                    <i class="fa-solid fa-file-medical w-4 text-center text-rose-300"></i>
+                    <span>Surat Rujukan</span>
+                </button>
+                <button onclick="switchTab('laporan')" id="nav-laporan" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-200 text-teal-100 hover:bg-brand-700/50 hover:text-white">
+                    <i class="fa-solid fa-table-list w-4 text-center text-indigo-300"></i>
+                    <span>Laporan & Kohort</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- TPMB Identity & Footer -->
+        <div class="p-4 border-t border-brand-700/50 bg-brand-950/40 text-[11px] text-teal-200/90">
+            <div class="flex items-center gap-2 mb-1">
+                <i class="fa-solid fa-user-nurse text-amber-400"></i>
+                <span class="font-bold text-white">TPMB Bidan Mutiara, S.ST</span>
+            </div>
+            <p class="text-[10px] text-teal-300/70">SIPB: 446/123/SIPB/2026</p>
+            <div class="mt-3 pt-2 border-t border-brand-800/60 flex items-center justify-between text-[10px] text-teal-400">
+                <span>Versi Web 2.0</span>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-medium">Online</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+        <!-- Top Header Bar -->
+        <header class="no-print bg-white/90 backdrop-blur border-b border-slate-200 px-6 py-3.5 flex flex-wrap justify-between items-center gap-4 sticky top-0 z-10 shadow-sm">
+            <div>
+                <h2 id="page-title" class="text-lg font-bold text-slate-800">Dashboard Utama</h2>
+                <p id="page-subtitle" class="text-xs text-slate-500">Ringkasan indikator & statistik pelayanan TPMB</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="resetDemoData()" title="Muat ulang data contoh" class="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg border border-slate-300 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrows-rotate text-brand-600"></i> Reset Demo Data
+                </button>
+                <div class="h-5 w-px bg-slate-200"></div>
+                <div class="text-xs font-medium text-slate-500 flex items-center gap-2">
+                    <i class="fa-regular fa-calendar-check text-brand-600"></i>
+                    <span id="current-date-display">-</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN VIEW MODULES -->
+        <div class="p-4 md:p-6 space-y-6 flex-1">
+
+            <!-- 1. DASHBOARD TAB -->
+            <section id="tab-dashboard" class="tab-content space-y-6">
+                <!-- Summary Metric Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Pasien</p>
+                            <h3 id="stat-total-pasien" class="text-2xl font-black text-slate-800 mt-0.5">0</h3>
+                            <p class="text-[11px] text-teal-600 font-medium mt-1 flex items-center gap-1"><i class="fa-solid fa-users text-[10px]"></i> Database TPMB</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 text-xl shadow-inner">
+                            <i class="fa-solid fa-address-book"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">ANC & Ibu Hamil</p>
+                            <h3 id="stat-anc-count" class="text-2xl font-black text-slate-800 mt-0.5">0</h3>
+                            <p class="text-[11px] text-emerald-600 font-medium mt-1 flex items-center gap-1"><i class="fa-solid fa-baby text-[10px]"></i> Pemeriksaan Aktif</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 text-xl shadow-inner">
+                            <i class="fa-solid fa-person-pregnant"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ibu Hamil Risti (KSPR)</p>
+                            <h3 id="stat-risti-count" class="text-2xl font-black text-rose-600 mt-0.5">0</h3>
+                            <p class="text-[11px] text-rose-500 font-medium mt-1 flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Skor KSPR &ge; 6</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 text-xl shadow-inner">
+                            <i class="fa-solid fa-shield-cat"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Remaja Anemia / KEK</p>
+                            <h3 id="stat-anemia-kek" class="text-2xl font-black text-amber-600 mt-0.5">0</h3>
+                            <p class="text-[11px] text-amber-600 font-medium mt-1 flex items-center gap-1"><i class="fa-solid fa-heart-pulse text-[10px]"></i> Hb &lt; 12 / LiLA &lt; 23.5</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 text-xl shadow-inner">
+                            <i class="fa-solid fa-ribbon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action & Overview Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Quick Launch Panel -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                        <div>
+                            <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider">Akses Cepat Pelayanan</h3>
+                            <p class="text-xs text-slate-500">Pilih formulir pencatatan yang diinginkan</p>
+                        </div>
+                        <div class="space-y-2.5">
+                            <button onclick="switchTab('pasien')" class="w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50/40 transition-all duration-150 flex items-center justify-between group">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center text-xs font-bold">
+                                        <i class="fa-solid fa-user-plus"></i>
+                                    </div>
+                                    <span class="text-xs font-semibold text-slate-700 group-hover:text-brand-900">1. Registrasi Pasien Baru</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:text-brand-600"></i>
+                            </button>
+                            <button onclick="switchTab('kespro')" class="w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-rose-400 hover:bg-rose-50/40 transition-all duration-150 flex items-center justify-between group">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center text-xs font-bold">
+                                        <i class="fa-solid fa-heart-pulse"></i>
+                                    </div>
+                                    <span class="text-xs font-semibold text-slate-700 group-hover:text-rose-900">2. Input Kespro / Catin</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:text-rose-600"></i>
+                            </button>
+                            <button onclick="switchTab('anc')" class="w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 transition-all duration-150 flex items-center justify-between group">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-bold">
+                                        <i class="fa-solid fa-stethoscope"></i>
+                                    </div>
+                                    <span class="text-xs font-semibold text-slate-700 group-hover:text-emerald-900">3. Pemeriksaan ANC & KSPR</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:text-emerald-600"></i>
+                            </button>
+                            <button onclick="switchTab('rujukan')" class="w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-rose-500 hover:bg-rose-50/40 transition-all duration-150 flex items-center justify-between group">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center text-xs font-bold">
+                                        <i class="fa-solid fa-paper-plane"></i>
+                                    </div>
+                                    <span class="text-xs font-semibold text-slate-700 group-hover:text-rose-900">4. Buat Surat Rujukan</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:text-rose-600"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Patients Feed -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-2 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider">Pasien Terbaru Terdaftar</h3>
+                                <p class="text-xs text-slate-500">Daftar rekam medis pasien terregistrasi</p>
+                            </div>
+                            <button onclick="switchTab('pasien')" class="text-xs font-bold text-brand-600 hover:text-brand-800 flex items-center gap-1">
+                                Lihat Semua <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
+                                        <th class="py-2.5 px-3 rounded-l-lg">Pasien</th>
+                                        <th class="py-2.5 px-3">Kategori</th>
+                                        <th class="py-2.5 px-3">Umur / HP</th>
+                                        <th class="py-2.5 px-3 text-right rounded-r-lg">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-recent-patients" class="divide-y divide-slate-100 text-xs">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. DATA PASIEN TAB -->
+            <section id="tab-pasien" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Registrasi Form -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-1 space-y-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-user-plus text-brand-600"></i> Registrasi Pasien Baru
+                            </h3>
+                            <p class="text-xs text-slate-500">Input identitas & rekam medis dasar pasien</p>
+                        </div>
+
+                        <form id="form-pasien" onsubmit="handleSavePasien(event)" class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">NIK (16 Digit Number)</label>
+                                <input type="number" id="pasien-nik" required placeholder="320109..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap Pasien</label>
+                                <input type="text" id="pasien-nama" required placeholder="Contoh: Ny. Ani / Sdri. Maya" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Lahir</label>
+                                    <input type="date" id="pasien-tgl-lahir" required onchange="calcAgeFromDOB()" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Umur (Tahun)</label>
+                                    <input type="number" id="pasien-umur" required readonly placeholder="0" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-600 font-bold">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori Pelayanan Klaster</label>
+                                <select id="pasien-status" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white">
+                                    <option value="Remaja">Remaja (10-19 Thn)</option>
+                                    <option value="Pranikah/Prakonsepsi">Pranikah / Prakonsepsi (Catin)</option>
+                                    <option value="Ibu Hamil ANC">Ibu Hamil (ANC)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">No. HP / WhatsApp</label>
+                                <input type="text" id="pasien-hp" placeholder="0812..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Alamat Lengkap</label>
+                                <textarea id="pasien-alamat" rows="2" placeholder="Jl. Melati RT 01 / RW 02..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan Data Pasien
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Tabel Master Pasien -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-2 space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-800">Database Master Pasien</h3>
+                                <p class="text-xs text-slate-500">Pencarian & filter kategori pasien TPMB</p>
+                            </div>
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <input type="text" id="search-pasien" onkeyup="renderPasienTable()" placeholder="Cari Nama / NIK..." class="text-xs p-2.5 rounded-xl border border-slate-300 w-full sm:w-48 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <select id="filter-status-pasien" onchange="renderPasienTable()" class="text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none bg-white">
+                                    <option value="">Semua Kategori</option>
+                                    <option value="Remaja">Remaja</option>
+                                    <option value="Pranikah/Prakonsepsi">Pranikah/Prakonsepsi</option>
+                                    <option value="Ibu Hamil ANC">Ibu Hamil ANC</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/80">
+                                        <th class="py-3 px-3">NIK & Nama</th>
+                                        <th class="py-3 px-3">Umur</th>
+                                        <th class="py-3 px-3">Kategori</th>
+                                        <th class="py-3 px-3">No. HP</th>
+                                        <th class="py-3 px-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-pasien-body" class="divide-y divide-slate-100 text-xs">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. KESPRO & PRANIKAH TAB -->
+            <section id="tab-kespro" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Form Input Kespro -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-1 space-y-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-heart-pulse text-rose-500"></i> Form Kespro & Pranikah
+                            </h3>
+                            <p class="text-xs text-slate-500">Skrining Anemia, KEK (LiLA), TTD & Imunisasi TT</p>
+                        </div>
+
+                        <form id="form-kespro" onsubmit="handleSaveKespro(event)" class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Pasien Remaja/Pranikah</label>
+                                <select id="kespro-pasien-id" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-rose-500 focus:outline-none bg-white">
+                                    <option value="">-- Pilih Pasien --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Pemeriksaan</label>
+                                <input type="date" id="kespro-tgl" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-rose-500">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Kadar Hb (g/dL)</label>
+                                    <input type="number" step="0.1" id="kespro-hb" placeholder="12.0" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-rose-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">LiLA (cm)</label>
+                                    <input type="number" step="0.1" id="kespro-lila" placeholder="23.5" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-rose-500">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Berat Badan (kg)</label>
+                                    <input type="number" step="0.1" id="kespro-bb" placeholder="48" onchange="calcKesproIMT()" class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tinggi Badan (cm)</label>
+                                    <input type="number" step="0.1" id="kespro-tb" placeholder="155" onchange="calcKesproIMT()" class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Indeks Massa Tubuh (IMT)</label>
+                                <input type="text" id="kespro-imt" readonly placeholder="Otomatis" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-600 font-bold">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pemberian TTD</label>
+                                    <select id="kespro-ttd" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 bg-white">
+                                        <option value="Diberikan (30 Tablet)">Diberikan (30 Ttd)</option>
+                                        <option value="Diberikan (10 Tablet)">Diberikan (10 Ttd)</option>
+                                        <option value="Tidak Diberikan">Tidak Diberikan</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Status Imunisasi TT</label>
+                                    <select id="kespro-tt" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 bg-white">
+                                        <option value="TT1">TT1</option>
+                                        <option value="TT2">TT2</option>
+                                        <option value="TT3">TT3</option>
+                                        <option value="TT4">TT4</option>
+                                        <option value="TT5">TT5</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Konseling Kespro / Pranikah</label>
+                                <textarea id="kespro-konseling" rows="2" placeholder="Edukasi gizi seimbang, pencegahan anemia, dan organ reproduksi..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-heart-circle-check"></i> Simpan Record Kespro
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Tabel Record Kespro -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-2 space-y-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800">Histori Kespro Remaja & Pranikah</h3>
+                            <p class="text-xs text-slate-500">Indikator Anemia (Hb < 12) & KEK (LiLA < 23.5 cm)</p>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/80">
+                                        <th class="py-3 px-3">Tgl & Pasien</th>
+                                        <th class="py-3 px-3">Kadar Hb</th>
+                                        <th class="py-3 px-3">LiLA (KEK)</th>
+                                        <th class="py-3 px-3">IMT</th>
+                                        <th class="py-3 px-3">TTD & TT</th>
+                                        <th class="py-3 px-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-kespro-body" class="divide-y divide-slate-100 text-xs">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. ANC & SKRINING RISIKO TAB (KSPR) -->
+            <section id="tab-anc" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Form ANC -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-1 space-y-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-person-pregnant text-emerald-600"></i> Pemeriksaan ANC & Skrining KSPR
+                            </h3>
+                            <p class="text-xs text-slate-500">Hitung HPHT-HPL & Skrining Risiko Poedji Rochjati</p>
+                        </div>
+
+                        <form id="form-anc" onsubmit="handleSaveANC(event)" class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Ibu Hamil</label>
+                                <select id="anc-pasien-id" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 bg-white">
+                                    <option value="">-- Pilih Pasien Ibu Hamil --</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal HPHT</label>
+                                    <input type="date" id="anc-hpht" required onchange="calculateObstetrics()" class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Periksa</label>
+                                    <input type="date" id="anc-tgl" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                            </div>
+
+                            <!-- Kalkulator Otomatis Obstetri -->
+                            <div class="p-3.5 bg-emerald-50/80 border border-emerald-200/80 rounded-xl space-y-1.5 text-xs">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-emerald-800 font-medium">Usia Kehamilan (UK):</span>
+                                    <span id="calc-uk" class="font-extrabold text-emerald-900 bg-emerald-200/60 px-2 py-0.5 rounded">- minggu</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-emerald-800 font-medium">Taksiran Persalinan (HPL):</span>
+                                    <span id="calc-tp" class="font-extrabold text-emerald-900 bg-emerald-200/60 px-2 py-0.5 rounded">-</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tekanan Darah (TD)</label>
+                                    <input type="text" id="anc-td" placeholder="120/80" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Kadar Hb (g/dL)</label>
+                                    <input type="number" step="0.1" id="anc-hb" placeholder="11.5" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">LiLA (cm)</label>
+                                    <input type="number" step="0.1" id="anc-lila" placeholder="24.0" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Presentasi Janin</label>
+                                    <select id="anc-pres" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 bg-white">
+                                        <option value="Kepala">Kepala</option>
+                                        <option value="Sungsang">Sungsang</option>
+                                        <option value="Melintang">Melintang</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">TFU (cm)</label>
+                                    <input type="number" id="anc-tfu" placeholder="28" class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">DJJ (x/menit)</label>
+                                    <input type="number" id="anc-djj" placeholder="140" class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                            </div>
+
+                            <!-- Skrining KSPR Checklist -->
+                            <div class="border-t border-slate-200 pt-3">
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="text-xs font-bold text-slate-800">Checklist Faktor Risiko (KSPR)</label>
+                                    <span class="text-[10px] text-slate-400">Poedji Rochjati</span>
+                                </div>
+                                <div class="space-y-1.5 max-h-44 overflow-y-auto pr-1 text-xs border border-slate-200 p-2 rounded-xl bg-slate-50/50">
+                                    <label class="flex items-center gap-2 p-1.5 rounded hover:bg-white cursor-pointer transition">
+                                        <input type="checkbox" class="kspr-check accent-rose-600" value="4" data-label="Primi Muda (<20 th) / Primi Tua (>35 th)">
+                                        <span>Primi Muda (&lt;20 th) / Primi Tua (&gt;35 th) [+4]</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-1.5 rounded hover:bg-white cursor-pointer transition">
+                                        <input type="checkbox" class="kspr-check accent-rose-600" value="4" data-label="Jarak Hamil <2 th / Terlalu Tua (>35 th)">
+                                        <span>Jarak Kehamilan &lt; 2 Tahun [+4]</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-1.5 rounded hover:bg-white cursor-pointer transition">
+                                        <input type="checkbox" class="kspr-check accent-rose-600" value="4" data-label="Tinggi Badan <= 145 cm">
+                                        <span>Tinggi Badan &le; 145 cm [+4]</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-1.5 rounded hover:bg-white cursor-pointer transition">
+                                        <input type="checkbox" class="kspr-check accent-rose-600" value="8" data-label="Pernah Operasi Caesar (SC)">
+                                        <span>Pernah Operasi Caesar / Bekas SC [+8]</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-1.5 rounded hover:bg-white cursor-pointer transition">
+                                        <input type="checkbox" class="kspr-check accent-rose-600" value="8" data-label="Hipertensi / Preeklampsia">
+                                        <span>Hipertensi / Preeklampsia [+8]</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-1.5 rounded hover:bg-white cursor-pointer transition">
+                                        <input type="checkbox" class="kspr-check accent-rose-600" value="8" data-label="Kehamilan Kembar / Gemelli">
+                                        <span>Kehamilan Kembar / Gemelli [+8]</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-1.5 rounded hover:bg-white cursor-pointer transition">
+                                        <input type="checkbox" class="kspr-check accent-rose-600" value="8" data-label="Kelainan Letak Janin">
+                                        <span>Kelainan Letak Janin (Sungsang/Melintang) [+8]</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-1.5 rounded hover:bg-white cursor-pointer transition">
+                                        <input type="checkbox" class="kspr-check accent-rose-600" value="12" data-label="Perdarahan Antepartum">
+                                        <span>Perdarahan Antepartum [+12]</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-clipboard-check"></i> Simpan Hasil Pemeriksaan ANC
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Tabel ANC & KSPR -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-2 space-y-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800">Rekapitulasi ANC & Tingkat Risiko KSPR</h3>
+                            <p class="text-xs text-slate-500">Evaluasi Risiko: KRR (Skor 2), KRT (Skor 6-10), KRST (Skor &ge;12)</p>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/80">
+                                        <th class="py-3 px-3">Tgl & Ibu Hamil</th>
+                                        <th class="py-3 px-3">UK & HPL</th>
+                                        <th class="py-3 px-3">Vital (TD/Hb/LiLA)</th>
+                                        <th class="py-3 px-3">Skor & Kat KSPR</th>
+                                        <th class="py-3 px-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-anc-body" class="divide-y divide-slate-100 text-xs">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. MODUL EDUKASI & KONSELING (KIE) TAB -->
+            <section id="tab-edukasi" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+                    <div class="max-w-xl">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-book-open-reader text-amber-500"></i> Form Pemberian Edukasi / KIE
+                        </h3>
+                        <p class="text-xs text-slate-500">Pencatatan pemberian konseling & edukasi kesehatan reproduksi</p>
+                    </div>
+
+                    <form id="form-edukasi" onsubmit="handleSaveEdukasi(event)" class="space-y-4 max-w-2xl">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Pasien</label>
+                                <select id="edukasi-pasien-id" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 bg-white">
+                                    <option value="">-- Pilih Pasien --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Konseling</label>
+                                <input type="date" id="edukasi-tgl" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-2">Checklist Topik Edukasi Diberikan</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                                <label class="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" name="materi-kie" value="Gizi Seimbang & Anemia" class="accent-brand-600">
+                                    <span>Gizi Seimbang & Anemia</span>
+                                </label>
+                                <label class="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" name="materi-kie" value="Tanda Bahaya Kehamilan" class="accent-brand-600">
+                                    <span>Tanda Bahaya Kehamilan</span>
+                                </label>
+                                <label class="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" name="materi-kie" value="Perencanaan Persalinan (P4K)" class="accent-brand-600">
+                                    <span>Perencanaan Persalinan (P4K)</span>
+                                </label>
+                                <label class="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" name="materi-kie" value="ASI Eksklusif & IMD" class="accent-brand-600">
+                                    <span>ASI Eksklusif & IMD</span>
+                                </label>
+                                <label class="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" name="materi-kie" value="Kesehatan Reproduksi Catin" class="accent-brand-600">
+                                    <span>Kespro Pranikah / Catin</span>
+                                </label>
+                                <label class="flex items-center gap-2.5 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" name="materi-kie" value="Personal Hygiene Organ Intim" class="accent-brand-600">
+                                    <span>Personal Hygiene Organ Intim</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Catatan Evaluasi / Response Pasien</label>
+                            <textarea id="edukasi-catatan" rows="3" placeholder="Pasien memahami materi dan bersedia minum TTD teratur..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300"></textarea>
+                        </div>
+
+                        <button type="submit" class="py-3 px-6 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Catatan Edukasi
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 6. MODUL RUJUKAN & CETAK SURAT TAB -->
+            <section id="tab-rujukan" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Form Rujukan -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-paper-plane text-rose-600"></i> Form Surat Rujukan Pelayanan
+                            </h3>
+                            <p class="text-xs text-slate-500">Penerbitan surat rujukan kasus Risiko Tinggi ke Faskes Lanjutan</p>
+                        </div>
+
+                        <form id="form-rujukan" onsubmit="handleGenerateRujukan(event)" class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Pasien Risiko Tinggi</label>
+                                <select id="rujukan-pasien-id" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 bg-white" onchange="autoFillRujukanDetails()">
+                                    <option value="">-- Pilih Pasien --</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Fasilitas Tujuan</label>
+                                    <input type="text" id="rujukan-faskes" required placeholder="RSUD Kota / Kab. X" class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Poli Tujuan</label>
+                                    <input type="text" id="rujukan-poli" required placeholder="Poli Kebidanan & Kandungan" class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Diagnosis / Masalah Medis</label>
+                                <input type="text" id="rujukan-diagnosis" required placeholder="G1P0A0 UK 32 mg dgn Preeklampsia Berat / Anemia Berat" class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Alasan Utama Rujukan</label>
+                                <input type="text" id="rujukan-alasan" required placeholder="Penanganan lebih lanjut & evaluasi dokter Sp.OG" class="w-full text-xs p-2.5 rounded-xl border border-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tindakan Awal yang Diberikan</label>
+                                <textarea id="rujukan-tindakan" rows="2" placeholder="Injeksi MgSO4 dosis awal, Pasang O2 3 Lpm, Infus RL..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-print"></i> Cetak Pratinjau Surat Rujukan
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Info Rujukan Box -->
+                    <div class="bg-gradient-to-br from-slate-900 to-brand-950 text-white p-6 rounded-2xl border border-slate-800 shadow-sm flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-full text-xs font-semibold">
+                                <i class="fa-solid fa-circle-exclamation"></i> Alur Rujukan Terintegrasi
+                            </div>
+                            <h4 class="text-base font-bold">Standard Operasional Rujukan TPMB</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Pastikan sebelum merujuk pasien Risiko Tinggi (KRT / KRST):
+                            </p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                                <li>Melakukan penstabilan kondisi umum pasien.</li>
+                                <li>Memberikan penanganan awal sesuai standar kompetensi bidan.</li>
+                                <li>Menghubungi Faskes rujukan penerima (Sisrute/WhatsApp RS).</li>
+                                <li>Mendampingi pasien selama proses rujukan bila kondisi kritis.</li>
+                            </ul>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-white/10 rounded-xl border border-white/10 text-xs text-slate-200">
+                            <i class="fa-solid fa-circle-info text-amber-400 mr-1"></i> Surat rujukan yang dibuat dapat dicetak langsung atau disimpan sebagai dokumen PDF resmi TPMB.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. LAPORAN & REKAP KOHORT TAB -->
+            <section id="tab-laporan" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 no-print">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800">Laporan Rekapitulasi Pelayanan TPMB</h3>
+                            <p class="text-xs text-slate-500">Ringkasan kohort gabungan Kespro, ANC, dan Rujukan</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="window.print()" class="px-4 py-2 bg-slate-800 text-white text-xs font-semibold rounded-xl hover:bg-slate-700 transition flex items-center gap-2 shadow">
+                                <i class="fa-solid fa-print"></i> Cetak / PDF
+                            </button>
+                            <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 text-white text-xs font-semibold rounded-xl hover:bg-emerald-700 transition flex items-center gap-2 shadow">
+                                <i class="fa-solid fa-file-excel"></i> Ekspor CSV/Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Table Kohort -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b-2 border-slate-300 font-bold text-slate-700 bg-slate-100/80">
+                                    <th class="py-3 px-3">Tanggal</th>
+                                    <th class="py-3 px-3">Nama Pasien</th>
+                                    <th class="py-3 px-3">Kategori</th>
+                                    <th class="py-3 px-3">Hasil Pemeriksaan / Diagnosa</th>
+                                    <th class="py-3 px-3">Keterangan / Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-laporan-body" class="divide-y divide-slate-200">
+                                <!-- Combined records -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- MODAL SURAT RUJUKAN CETAK -->
+    <div id="modal-rujukan" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-8 shadow-2xl space-y-6 overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-start border-b border-slate-200 pb-4 no-print">
+                <h3 class="text-base font-bold text-slate-800">Pratinjau Surat Rujukan Resmi</h3>
+                <button onclick="closeRujukanModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Print Area -->
+            <div id="print-area-rujukan" class="space-y-4 text-slate-900 font-serif print-shadow-none p-2">
+                <!-- Kop Surat -->
+                <div class="text-center border-b-2 border-slate-900 pb-3">
+                    <h2 class="font-bold text-base uppercase tracking-wider">TEMPAT PRAKTIK MANDIRI BIDAN (TPMB)</h2>
+                    <h3 class="font-extrabold text-lg text-slate-900">BIDAN MUTIARA, S.ST</h3>
+                    <p class="text-xs italic font-sans text-slate-600">SIPB: 446/123/SIPB/2026 | Jl. Kesehatan Mawar No. 45, Telp: (021) 555-0199</p>
+                </div>
+
+                <div class="text-center py-1">
+                    <h4 class="font-bold text-sm underline tracking-widest uppercase">SURAT RUJUKAN PELAYANAN KESEHATAN</h4>
+                    <p class="text-[11px] font-sans text-slate-500">No: <span id="print-no-surat">001/TPMB/X/2026</span></p>
+                </div>
+
+                <div class="text-xs font-sans space-y-1">
+                    <p>Kepada Yth:</p>
+                    <p class="font-bold text-sm"><span id="print-faskes-tujuan">RSUD KOTA SUKABUMI</span></p>
+                    <p>Poli / Unit: <span id="print-poli-tujuan">Poli Kebidanan & Kandungan</span></p>
+                </div>
+
+                <div class="text-xs font-sans space-y-2.5">
+                    <p>Dengan hormat, mohon pemeriksaan dan penanganan medis lebih lanjut terhadap pasien berikut:</p>
+                    
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1 text-xs">
+                        <div class="grid grid-cols-3"><span>Nama Pasien</span><span class="col-span-2">: <strong id="print-nama">Ny. Ani</strong></span></div>
+                        <div class="grid grid-cols-3"><span>Umur / NIK</span><span class="col-span-2">: <span id="print-umur">28 thn</span> / <span id="print-nik">3201...</span></span></div>
+                        <div class="grid grid-cols-3"><span>Alamat</span><span class="col-span-2">: <span id="print-alamat">Jl. Melati No. 5</span></span></div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <p class="font-bold">Diagnosis / Masalah Medis:</p>
+                        <p id="print-diagnosis" class="p-2.5 border border-slate-200 rounded-lg italic bg-slate-50/50">G1P0A0 UK 34 minggu dengan Preeklampsia Berat</p>
+                    </div>
+
+                    <div class="space-y-1">
+                        <p class="font-bold">Alasan Rujukan:</p>
+                        <p id="print-alasan" class="text-slate-700">Penanganan kegawatdaruratan obstetri & evaluasi Sp.OG</p>
+                    </div>
+
+                    <div class="space-y-1">
+                        <p class="font-bold">Tindakan Awal yang Diberikan:</p>
+                        <p id="print-tindakan" class="text-slate-700">Injeksi MgSO4 dosis awal, Pasang O2 3 lpm, Infus Ringer Laktat</p>
+                    </div>
+                </div>
+
+                <div class="pt-6 flex justify-end text-xs font-sans">
+                    <div class="text-center w-52">
+                        <p id="print-tgl-surat">Jakarta, 7 Oktober 2026</p>
+                        <p class="mb-14">Bidan Perujuk,</p>
+                        <p class="font-bold underline text-sm">Bidan Mutiara, S.ST</p>
+                        <p class="text-[10px] text-slate-500">SIPB: 446/123/SIPB/2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 border-t border-slate-200 pt-4 no-print">
+                <button onclick="closeRujukanModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl">Tutup</button>
+                <button onclick="window.print()" class="px-4 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl flex items-center gap-2 shadow">
+                    <i class="fa-solid fa-print"></i> Cetak Surat Rujukan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // Default Seed Data
+        const defaultSeedData = {
+            pasien: [
+                { id: 'PAS-001', nik: '3201094508980001', nama: 'Siti Rahmawati', tglLahir: '2008-05-12', umur: 18, status: 'Remaja', hp: '081234567890', alamat: 'RT 02/03 Desa Sukamaju' },
+                { id: 'PAS-002', nik: '3201095204990002', nama: 'Dewi Lestari', tglLahir: '2001-09-14', umur: 25, status: 'Pranikah/Prakonsepsi', hp: '085711223344', alamat: 'Jl. Mawar No. 10' },
+                { id: 'PAS-003', nik: '3201096101960003', nama: 'Ny. Ani Wijaya', tglLahir: '1996-03-20', umur: 30, status: 'Ibu Hamil ANC', hp: '081988776655', alamat: 'Komp. Bunga Indah B2' }
+            ],
+            kespro: [
+                { id: 'KSP-001', pasienId: 'PAS-001', tgl: '2026-10-01', hb: 10.5, lila: 21.5, bb: 42, tb: 150, imt: '18.6 (Normal)', ttd: 'Diberikan (30 Tablet)', tt: 'TT2', konseling: 'Pentingnya konsumsi TTD dan makanan tinggi zat besi' },
+                { id: 'KSP-002', pasienId: 'PAS-002', tgl: '2026-10-03', hb: 12.4, lila: 24.0, bb: 52, tb: 158, imt: '20.8 (Normal)', ttd: 'Diberikan (10 Tablet)', tt: 'TT3', konseling: 'Skrining kesehatan catin & kesiapan konsepsi' }
+            ],
+            anc: [
+                { id: 'ANC-001', pasienId: 'PAS-003', hpht: '2026-03-01', tgl: '2026-10-05', uk: '31', tp: '2026-12-08', td: '145/95', hb: 10.2, lila: 22.5, pres: 'Kepala', tfu: 28, djj: 140, skorKspr: 12, katKspr: 'KRST (Sangat Tinggi)', faktor: ['Hipertensi / Preeklampsia', 'Anemia (HB 10.2)', 'KEK (LILA 22.5)'] }
+            ],
+            edukasi: [
+                { id: 'EDU-001', pasienId: 'PAS-003', tgl: '2026-10-05', materi: ['Tanda Bahaya Kehamilan', 'Perencanaan Persalinan (P4K)'], catatan: 'Ibu memahami bahaya hipertensi saat hamil' }
+            ],
+            rujukan: []
+        };
+
+        // App Database State
+        let db = { pasien: [], kespro: [], anc: [], edukasi: [], rujukan: [] };
+
+        window.onload = function() {
+            loadStorage();
+            document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            switchTab('dashboard');
+        };
+
+        function loadStorage() {
+            const stored = localStorage.getItem('sip_tpmb_klaster_db');
+            if (stored) {
+                try { db = JSON.parse(stored); }
+                catch(e) { db = JSON.parse(JSON.stringify(defaultSeedData)); }
+            } else {
+                db = JSON.parse(JSON.stringify(defaultSeedData));
+                saveStorage();
+            }
+            refreshAllViews();
+        }
+
+        function saveStorage() {
+            localStorage.setItem('sip_tpmb_klaster_db', JSON.stringify(db));
+        }
+
+        function resetDemoData() {
+            if (confirm('Apakah Anda ingin memuat ulang data contoh bawaan?')) {
+                db = JSON.parse(JSON.stringify(defaultSeedData));
+                saveStorage();
+                refreshAllViews();
+                alert('Data berhasil di-reset.');
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-700', 'text-white', 'shadow-md');
+                btn.classList.add('text-teal-100');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-brand-700', 'text-white', 'shadow-md');
+                activeBtn.classList.remove('text-teal-100');
+            }
+
+            const pageTitles = {
+                'dashboard': ['Dashboard Utama', 'Ringkasan indikator & statistik pelayanan TPMB'],
+                'pasien': ['Registrasi & Rekam Medis', 'Pendaftaran identitas pasien Kespro, Pranikah, & ANC'],
+                'kespro': ['Kespro Remaja & Pranikah', 'Pemeriksaan Anemia, KEK, Status TT, dan Konseling Catin'],
+                'anc': ['Antenatal Care (ANC) & KSPR', 'Kalkulator kehamilan HPHT & Skrining Risiko Poedji Rochjati'],
+                'edukasi': ['Modul KIE & Konseling', 'Dokumentasi edukasi kesehatan reproduksi & kehamilan'],
+                'rujukan': ['Surat Rujukan Pelayanan', 'Penerbitan surat rujukan resmi kasus risiko tinggi'],
+                'laporan': ['Laporan & Rekapitulasi Kohort', 'Tabel rekapitulasi gabungan & ekspor CSV']
+            };
+
+            document.getElementById('page-title').innerText = pageTitles[tabId][0];
+            document.getElementById('page-subtitle').innerText = pageTitles[tabId][1];
+
+            populateDropdowns();
+            refreshAllViews();
+        }
+
+        function calcAgeFromDOB() {
+            const dob = new Date(document.getElementById('pasien-tgl-lahir').value);
+            if (isNaN(dob.getTime())) return;
+            const diff = Date.now() - dob.getTime();
+            const ageDate = new Date(diff);
+            const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+            document.getElementById('pasien-umur').value = age;
+        }
+
+        function handleSavePasien(e) {
+            e.preventDefault();
+            const newPasien = {
+                id: 'PAS-' + String(Date.now()).slice(-4),
+                nik: document.getElementById('pasien-nik').value,
+                nama: document.getElementById('pasien-nama').value,
+                tglLahir: document.getElementById('pasien-tgl-lahir').value,
+                umur: parseInt(document.getElementById('pasien-umur').value) || 0,
+                status: document.getElementById('pasien-status').value,
+                hp: document.getElementById('pasien-hp').value,
+                alamat: document.getElementById('pasien-alamat').value
+            };
+
+            db.pasien.unshift(newPasien);
+            saveStorage();
+            document.getElementById('form-pasien').reset();
+            alert('Data pasien berhasil disimpan!');
+            refreshAllViews();
+        }
+
+        function deletePasien(id) {
+            if (confirm('Hapus data pasien ini? Data terkait juga akan terhapus.')) {
+                db.pasien = db.pasien.filter(p => p.id !== id);
+                saveStorage();
+                refreshAllViews();
+            }
+        }
+
+        function calcKesproIMT() {
+            const bb = parseFloat(document.getElementById('kespro-bb').value);
+            const tbCm = parseFloat(document.getElementById('kespro-tb').value);
+            if (bb > 0 && tbCm > 0) {
+                const tbM = tbCm / 100;
+                const imt = (bb / (tbM * tbM)).toFixed(1);
+                let cat = 'Normal';
+                if (imt < 18.5) cat = 'Kurus';
+                else if (imt >= 25) cat = 'Gemuk';
+                document.getElementById('kespro-imt').value = `${imt} (${cat})`;
+            }
+        }
+
+        function handleSaveKespro(e) {
+            e.preventDefault();
+            const record = {
+                id: 'KSP-' + String(Date.now()).slice(-4),
+                pasienId: document.getElementById('kespro-pasien-id').value,
+                tgl: document.getElementById('kespro-tgl').value,
+                hb: parseFloat(document.getElementById('kespro-hb').value),
+                lila: parseFloat(document.getElementById('kespro-lila').value),
+                bb: parseFloat(document.getElementById('kespro-bb').value) || 0,
+                tb: parseFloat(document.getElementById('kespro-tb').value) || 0,
+                imt: document.getElementById('kespro-imt').value || '-',
+                ttd: document.getElementById('kespro-ttd').value,
+                tt: document.getElementById('kespro-tt').value,
+                konseling: document.getElementById('kespro-konseling').value
+            };
+
+            db.kespro.unshift(record);
+            saveStorage();
+            document.getElementById('form-kespro').reset();
+            alert('Catatan Kespro & Pranikah disimpan!');
+            refreshAllViews();
+        }
+
+        function calculateObstetrics() {
+            const hphtVal = document.getElementById('anc-hpht').value;
+            if (!hphtVal) return;
+
+            const hpht = new Date(hphtVal);
+            const today = new Date();
+
+            // Negele Rule
+            const tp = new Date(hpht);
+            tp.setDate(tp.getDate() + 7);
+            tp.setMonth(tp.getMonth() - 3);
+            tp.setFullYear(tp.getFullYear() + 1);
+
+            document.getElementById('calc-tp').innerText = tp.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
+
+            const diffDays = Math.floor((today - hpht) / (1000 * 60 * 60 * 24));
+            const weeks = Math.floor(diffDays / 7);
+            const days = diffDays % 7;
+
+            document.getElementById('calc-uk').innerText = `${weeks} Mgg ${days} Hari`;
+        }
+
+        function handleSaveANC(e) {
+            e.preventDefault();
+
+            let skorKspr = 2; // Base score
+            let faktor = [];
+            document.querySelectorAll('.kspr-check:checked').forEach(cb => {
+                skorKspr += parseInt(cb.value);
+                faktor.push(cb.getAttribute('data-label'));
+            });
+
+            const hb = parseFloat(document.getElementById('anc-hb').value);
+            const lila = parseFloat(document.getElementById('anc-lila').value);
+
+            if (hb < 11) faktor.push(`Anemia (HB ${hb} g/dL)`);
+            if (lila < 23.5) faktor.push(`KEK (LILA ${lila} cm)`);
+
+            let katKspr = 'KRR (Risiko Rendah)';
+            if (skorKspr >= 12) katKspr = 'KRST (Sangat Tinggi)';
+            else if (skorKspr >= 6 || hb < 11 || lila < 23.5) katKspr = 'KRT (Risiko Tinggi)';
+
+            const hphtVal = document.getElementById('anc-hpht').value;
+            const hpht = new Date(hphtVal);
+            const diffDays = Math.floor((new Date() - hpht) / (1000 * 60 * 60 * 24));
+            const ukWeeks = Math.floor(diffDays / 7);
+
+            const tp = new Date(hpht);
+            tp.setDate(tp.getDate() + 7);
+            tp.setMonth(tp.getMonth() - 3);
+            tp.setFullYear(tp.getFullYear() + 1);
+
+            const ancRecord = {
+                id: 'ANC-' + String(Date.now()).slice(-4),
+                pasienId: document.getElementById('anc-pasien-id').value,
+                hpht: hphtVal,
+                tgl: document.getElementById('anc-tgl').value,
+                uk: ukWeeks.toString(),
+                tp: tp.toISOString().split('T')[0],
+                td: document.getElementById('anc-td').value,
+                hb: hb,
+                lila: lila,
+                pres: document.getElementById('anc-pres').value,
+                tfu: document.getElementById('anc-tfu').value,
+                djj: document.getElementById('anc-djj').value,
+                skorKspr: skorKspr,
+                katKspr: katKspr,
+                faktor: faktor
+            };
+
+            db.anc.unshift(ancRecord);
+            saveStorage();
+            document.getElementById('form-anc').reset();
+            alert('Hasil Pemeriksaan ANC & Skrining KSPR disimpan!');
+            refreshAllViews();
+        }
+
+        function handleSaveEdukasi(e) {
+            e.preventDefault();
+            const checked = [];
+            document.querySelectorAll('input[name="materi-kie"]:checked').forEach(cb => checked.push(cb.value));
+
+            const record = {
+                id: 'EDU-' + String(Date.now()).slice(-4),
+                pasienId: document.getElementById('edukasi-pasien-id').value,
+                tgl: document.getElementById('edukasi-tgl').value,
+                materi: checked,
+                catatan: document.getElementById('edukasi-catatan').value
+            };
+
+            db.edukasi.unshift(record);
+            saveStorage();
+            document.getElementById('form-edukasi').reset();
+            alert('Dokumentasi KIE/Edukasi berhasil disimpan!');
+            refreshAllViews();
+        }
+
+        function autoFillRujukanDetails() {
+            const pId = document.getElementById('rujukan-pasien-id').value;
+            const ancRec = db.anc.find(a => a.pasienId === pId);
+            if (ancRec) {
+                document.getElementById('rujukan-diagnosis').value = `Ibu Hamil UK ${ancRec.uk} mg, ${ancRec.katKspr}. Indikasi: ${ancRec.faktor.join(', ')}`;
+                document.getElementById('rujukan-alasan').value = 'Evaluasi & Penanganan Kegawatdaruratan oleh Dokter Sp.OG';
+            }
+        }
+
+        function handleGenerateRujukan(e) {
+            e.preventDefault();
+            const pId = document.getElementById('rujukan-pasien-id').value;
+            const pasien = db.pasien.find(p => p.id === pId);
+            if (!pasien) return;
+
+            document.getElementById('print-no-surat').innerText = `001/TPMB-RJK/${new Date().getMonth()+1}/${new Date().getFullYear()}`;
+            document.getElementById('print-faskes-tujuan').innerText = document.getElementById('rujukan-faskes').value;
+            document.getElementById('print-poli-tujuan').innerText = document.getElementById('rujukan-poli').value;
+            document.getElementById('print-nama').innerText = pasien.nama;
+            document.getElementById('print-umur').innerText = pasien.umur + ' Tahun';
+            document.getElementById('print-nik').innerText = pasien.nik;
+            document.getElementById('print-alamat').innerText = pasien.alamat;
+            document.getElementById('print-diagnosis').innerText = document.getElementById('rujukan-diagnosis').value;
+            document.getElementById('print-alasan').innerText = document.getElementById('rujukan-alasan').value;
+            document.getElementById('print-tindakan').innerText = document.getElementById('rujukan-tindakan').value;
+            document.getElementById('print-tgl-surat').innerText = `Jakarta, ${new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})}`;
+
+            db.rujukan.unshift({
+                id: 'RJK-' + Date.now(),
+                pasienId: pId,
+                tgl: new Date().toISOString().split('T')[0],
+                faskes: document.getElementById('rujukan-faskes').value,
+                diagnosis: document.getElementById('rujukan-diagnosis').value
+            });
+            saveStorage();
+
+            document.getElementById('modal-rujukan').classList.remove('hidden');
+        }
+
+        function closeRujukanModal() {
+            document.getElementById('modal-rujukan').classList.add('hidden');
+        }
+
+        function populateDropdowns() {
+            const kesproSelect = document.getElementById('kespro-pasien-id');
+            const ancSelect = document.getElementById('anc-pasien-id');
+            const edukasiSelect = document.getElementById('edukasi-pasien-id');
+            const rujukanSelect = document.getElementById('rujukan-pasien-id');
+
+            if (kesproSelect) kesproSelect.innerHTML = '<option value="">-- Pilih Pasien --</option>';
+            if (ancSelect) ancSelect.innerHTML = '<option value="">-- Pilih Ibu Hamil --</option>';
+            if (edukasiSelect) edukasiSelect.innerHTML = '<option value="">-- Pilih Pasien --</option>';
+            if (rujukanSelect) rujukanSelect.innerHTML = '<option value="">-- Pilih Pasien --</option>';
+
+            db.pasien.forEach(p => {
+                const opt = `<option value="${p.id}">${p.nama} (${p.status} - ${p.umur} thn)</option>`;
+                if (edukasiSelect) edukasiSelect.innerHTML += opt;
+                if (rujukanSelect) rujukanSelect.innerHTML += opt;
+
+                if (['Remaja', 'Pranikah/Prakonsepsi'].includes(p.status) && kesproSelect) {
+                    kesproSelect.innerHTML += opt;
+                }
+                if (p.status === 'Ibu Hamil ANC' && ancSelect) {
+                    ancSelect.innerHTML += opt;
+                }
+            });
+        }
+
+        function refreshAllViews() {
+            renderDashboard();
+            renderPasienTable();
+            renderKesproTable();
+            renderANCTable();
+            renderLaporan();
+        }
+
+        function renderDashboard() {
+            document.getElementById('stat-total-pasien').innerText = db.pasien.length;
+            document.getElementById('stat-anc-count').innerText = db.anc.length;
+
+            const ristiCount = db.anc.filter(a => a.katKspr.includes('KRT') || a.katKspr.includes('KRST')).length;
+            document.getElementById('stat-risti-count').innerText = ristiCount;
+
+            const anemiaKekCount = db.kespro.filter(k => k.hb < 12 || k.lila < 23.5).length;
+            document.getElementById('stat-anemia-kek').innerText = anemiaKekCount;
+
+            const recentTbody = document.getElementById('dashboard-recent-patients');
+            recentTbody.innerHTML = '';
+            db.pasien.slice(0, 5).forEach(p => {
+                recentTbody.innerHTML += `
+                    <tr>
+                        <td class="py-2.5 px-3 font-bold text-slate-800">${p.nama}<br><span class="text-[10px] text-slate-400 font-normal">NIK: ${p.nik}</span></td>
+                        <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${getStatusBadge(p.status)}">${p.status}</span></td>
+                        <td class="py-2.5 px-3 text-slate-600">${p.umur} thn<br><span class="text-[10px] text-slate-400">${p.hp}</span></td>
+                        <td class="py-2.5 px-3 text-right">
+                            <button onclick="switchTab('pasien')" class="text-brand-600 hover:text-brand-800 font-bold">Detail</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function getStatusBadge(status) {
+            switch(status) {
+                case 'Remaja': return 'bg-indigo-50 text-indigo-700 border border-indigo-200';
+                case 'Pranikah/Prakonsepsi': return 'bg-pink-50 text-pink-700 border border-pink-200';
+                case 'Ibu Hamil ANC': return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+                default: return 'bg-slate-100 text-slate-700';
+            }
+        }
+
+        function renderPasienTable() {
+            const tbody = document.getElementById('table-pasien-body');
+            const search = document.getElementById('search-pasien').value.toLowerCase();
+            const filter = document.getElementById('filter-status-pasien').value;
+
+            tbody.innerHTML = '';
+            const filtered = db.pasien.filter(p => {
+                const matchSearch = p.nama.toLowerCase().includes(search) || p.nik.includes(search);
+                const matchFilter = filter ? p.status === filter : true;
+                return matchSearch && matchFilter;
+            });
+
+            filtered.forEach(p => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-3 font-semibold text-slate-800">${p.nama}<br><span class="text-[10px] text-slate-400 font-normal">NIK: ${p.nik}</span></td>
+                        <td class="py-3 px-3 text-slate-600">${p.umur} Thn</td>
+                        <td class="py-3 px-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${getStatusBadge(p.status)}">${p.status}</span></td>
+                        <td class="py-3 px-3 text-slate-600">${p.hp || '-'}</td>
+                        <td class="py-3 px-3 text-right">
+                            <button onclick="deletePasien('${p.id}')" class="text-rose-500 hover:text-rose-700 font-medium"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderKesproTable() {
+            const tbody = document.getElementById('table-kespro-body');
+            tbody.innerHTML = '';
+
+            db.kespro.forEach(k => {
+                const p = db.pasien.find(x => x.id === k.pasienId) || { nama: 'Pasien Terhapus' };
+                const isAnemia = k.hb < 12;
+                const isKek = k.lila < 23.5;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-3 font-semibold text-slate-800">${p.nama}<br><span class="text-[10px] text-slate-400 font-normal">${k.tgl}</span></td>
+                        <td class="py-3 px-3">
+                            <span class="font-extrabold ${isAnemia ? 'text-rose-600' : 'text-emerald-600'}">${k.hb} g/dL</span>
+                            <span class="block text-[10px] ${isAnemia ? 'text-rose-500 font-bold' : 'text-slate-400'}">${isAnemia ? 'Anemia' : 'Normal'}</span>
+                        </td>
+                        <td class="py-3 px-3">
+                            <span class="font-extrabold ${isKek ? 'text-amber-600' : 'text-emerald-600'}">${k.lila} cm</span>
+                            <span class="block text-[10px] ${isKek ? 'text-amber-600 font-bold' : 'text-slate-400'}">${isKek ? 'KEK' : 'Normal'}</span>
+                        </td>
+                        <td class="py-3 px-3 text-slate-600">${k.imt}</td>
+                        <td class="py-3 px-3 text-slate-600">${k.ttd}<br><span class="text-[10px] text-indigo-600 font-bold">${k.tt}</span></td>
+                        <td class="py-3 px-3 text-right">
+                            <button onclick="deleteKespro('${k.id}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteKespro(id) {
+            if (confirm('Hapus rekam kespro ini?')) {
+                db.kespro = db.kespro.filter(k => k.id !== id);
+                saveStorage();
+                refreshAllViews();
+            }
+        }
+
+        function renderANCTable() {
+            const tbody = document.getElementById('table-anc-body');
+            tbody.innerHTML = '';
+
+            db.anc.forEach(a => {
+                const p = db.pasien.find(x => x.id === a.pasienId) || { nama: 'Pasien Terhapus' };
+                let badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                if (a.katKspr.includes('KRST')) badgeClass = 'bg-rose-100 text-rose-800 border-rose-300 font-bold';
+                else if (a.katKspr.includes('KRT')) badgeClass = 'bg-amber-50 text-amber-800 border-amber-200 font-bold';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-3 font-semibold text-slate-800">${p.nama}<br><span class="text-[10px] text-slate-400 font-normal">${a.tgl}</span></td>
+                        <td class="py-3 px-3 text-slate-600">UK: ${a.uk} mg<br><span class="text-[10px] text-emerald-700 font-bold">HPL: ${a.tp}</span></td>
+                        <td class="py-3 px-3 text-slate-600">TD: ${a.td}<br><span class="text-[10px]">Hb: ${a.hb} | LiLA: ${a.lila}</span></td>
+                        <td class="py-3 px-3">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] border ${badgeClass}">Skor ${a.skorKspr} - ${a.katKspr}</span>
+                            <span class="block text-[10px] text-slate-500 mt-0.5">${a.faktor.join(', ') || 'Tidak ada faktor Risti'}</span>
+                        </td>
+                        <td class="py-3 px-3 text-right">
+                            <button onclick="deleteANC('${a.id}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteANC(id) {
+            if (confirm('Hapus rekam ANC ini?')) {
+                db.anc = db.anc.filter(a => a.id !== id);
+                saveStorage();
+                refreshAllViews();
+            }
+        }
+
+        function renderLaporan() {
+            const tbody = document.getElementById('table-laporan-body');
+            tbody.innerHTML = '';
+
+            let combined = [];
+
+            db.kespro.forEach(k => {
+                const p = db.pasien.find(x => x.id === k.pasienId) || {};
+                combined.push({
+                    tgl: k.tgl,
+                    nama: p.nama || '-',
+                    kategori: 'Kespro & Pranikah',
+                    hasil: `Hb: ${k.hb} g/dL | LiLA: ${k.lila} cm | IMT: ${k.imt}`,
+                    ket: `Konseling: ${k.konseling || '-'}`
+                });
+            });
+
+            db.anc.forEach(a => {
+                const p = db.pasien.find(x => x.id === a.pasienId) || {};
+                combined.push({
+                    tgl: a.tgl,
+                    nama: p.nama || '-',
+                    kategori: 'ANC Kehamilan',
+                    hasil: `UK: ${a.uk} mg | TD: ${a.td} | Hb: ${a.hb}`,
+                    ket: `KSPR: Skor ${a.skorKspr} (${a.katKspr})`
+                });
+            });
+
+            db.rujukan.forEach(r => {
+                const p = db.pasien.find(x => x.id === r.pasienId) || {};
+                combined.push({
+                    tgl: r.tgl,
+                    nama: p.nama || '-',
+                    kategori: 'Rujukan Medis',
+                    hasil: `Tujuan: ${r.faskes}`,
+                    ket: `Diagnosis: ${r.diagnosis}`
+                });
+            });
+
+            combined.sort((a,b) => new Date(b.tgl) - new Date(a.tgl));
+
+            combined.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-2.5 px-3 font-semibold text-slate-700">${item.tgl}</td>
+                        <td class="py-2.5 px-3 font-bold text-slate-800">${item.nama}</td>
+                        <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[10px] bg-slate-100 border text-slate-700 font-semibold">${item.kategori}</span></td>
+                        <td class="py-2.5 px-3 text-slate-700">${item.hasil}</td>
+                        <td class="py-2.5 px-3 text-slate-600">${item.ket}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Tanggal,Nama Pasien,Kategori,Hasil Pemeriksaan,Keterangan\n";
+
+            db.kespro.forEach(k => {
+                const p = db.pasien.find(x => x.id === k.pasienId) || {};
+                csvContent += `"${k.tgl}","${p.nama || ''}","Kespro/Pranikah","Hb: ${k.hb} LiLA: ${k.lila}","${k.konseling || ''}"\n`;
+            });
+
+            db.anc.forEach(a => {
+                const p = db.pasien.find(x => x.id === a.pasienId) || {};
+                csvContent += `"${a.tgl}","${p.nama || ''}","ANC Kehamilan","UK: ${a.uk} mg KSPR: ${a.katKspr}","Skor ${a.skorKspr}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Rekap_Pelayanan_TPMB_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
